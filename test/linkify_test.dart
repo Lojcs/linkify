@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:linkify/linkify.dart';
 import 'package:test/test.dart';
 
-final listEqual = const ListEquality().equals;
+final bool Function(List<dynamic>, List<dynamic>) listEqual = const ListEquality().equals;
 
 void expectListEqual(List actual, List expected) {
   expect(

@@ -14,18 +14,18 @@ class TimeStampLinkifier extends Linkifier {
 
     elements.forEach((element) {
       if (element is TextElement) {
-        final match = _timeStampRegex.firstMatch(element.text);
+        final match = _timeStampRegex.firstMatch(element.text!);
 
         if (match == null) {
           list.add(element);
         } else {
-          final text = element.text.replaceFirst(match.group(0), '');
+          final text = element.text!.replaceFirst(match.group(0)!, '');
 
-          if (match.group(1).isNotEmpty) {
+          if (match.group(1)!.isNotEmpty) {
             list.add(TextElement(match.group(1)));
           }
 
-          if (match.group(2).isNotEmpty) {
+          if (match.group(2)!.isNotEmpty) {
             list.add(TimeStampElement(
               match.group(2),
             ));
@@ -46,7 +46,7 @@ class TimeStampLinkifier extends Linkifier {
 
 /// Represents an element containing an email address
 class TimeStampElement extends LinkableElement {
-  final String timeStamp;
+  final String? timeStamp;
 
   TimeStampElement(this.timeStamp) : super(timeStamp, timeStamp);
 

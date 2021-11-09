@@ -8,7 +8,7 @@ export 'package:linkify/src/time_stamp.dart'
     show TimeStampLinkifier, TimeStampElement;
 
 abstract class LinkifyElement {
-  final String text;
+  final String? text;
 
   LinkifyElement(this.text);
 
@@ -19,9 +19,9 @@ abstract class LinkifyElement {
 }
 
 class LinkableElement extends LinkifyElement {
-  final String url;
+  final String? url;
 
-  LinkableElement(String text, this.url) : super(text ?? url);
+  LinkableElement(String? text, this.url) : super(text ?? url);
 
   @override
   bool operator ==(other) => equals(other);
@@ -33,7 +33,7 @@ class LinkableElement extends LinkifyElement {
 
 /// Represents an element containing text
 class TextElement extends LinkifyElement {
-  TextElement(String text) : super(text);
+  TextElement(String? text) : super(text);
 
   @override
   String toString() {
@@ -51,7 +51,7 @@ abstract class Linkifier {
   const Linkifier();
 
   List<LinkifyElement> parse(
-      List<LinkifyElement> elements, LinkifyOptions options);
+      List<LinkifyElement> elements, LinkifyOptions? options);
 }
 
 class LinkifyOptions {
@@ -93,7 +93,7 @@ const defaultLinkifiers = [_urlLinkifier, _emailLinkifier, _timeStampLinkifier];
 /// Will default to all (if `null`).
 List<LinkifyElement> linkify(
   String text, {
-  LinkifyOptions options,
+  LinkifyOptions? options,
   List<Linkifier> linkifiers = defaultLinkifiers,
 }) {
   var list = <LinkifyElement>[TextElement(text)];
