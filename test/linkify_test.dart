@@ -11,35 +11,35 @@ void expectListEqual(List actual, List expected) {
       expected,
     ),
     true,
-    reason: "Expected $actual to be $expected",
+    reason: 'Expected $actual to be $expected',
   );
 }
 
 void main() {
   test('Parses only text', () {
     expectListEqual(
-      linkify("Lorem ipsum dolor sit amet"),
-      [TextElement("Lorem ipsum dolor sit amet")],
+      linkify('Lorem ipsum dolor sit amet'),
+      [TextElement('Lorem ipsum dolor sit amet')],
     );
   });
 
   test('Parses only text with multiple lines', () {
     expectListEqual(
-      linkify("Lorem ipsum\ndolor sit amet"),
-      [TextElement("Lorem ipsum\ndolor sit amet")],
+      linkify('Lorem ipsum\ndolor sit amet'),
+      [TextElement('Lorem ipsum\ndolor sit amet')],
     );
   });
 
   test('Parses only link', () {
     expectListEqual(
-      linkify("https://example.com"),
-      [UrlElement("https://example.com", "example.com")],
+      linkify('https://example.com'),
+      [UrlElement('https://example.com', 'example.com')],
     );
 
     expectListEqual(
-      linkify("https://www.example.com",
+      linkify('https://www.example.com',
           options: LinkifyOptions(removeWww: true)),
-      [UrlElement("https://www.example.com", "example.com")],
+      [UrlElement('https://www.example.com', 'example.com')],
     );
   });
 

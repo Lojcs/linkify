@@ -92,9 +92,9 @@ const defaultLinkifiers = [_urlLinkifier, _emailLinkifier, _timeStampLinkifier];
 /// Uses [linkTypes] to enable some types of links (URL, email).
 /// Will default to all (if `null`).
 List<LinkifyElement> linkify(
-  String text, {
+  String? text, {
   LinkifyOptions? options,
-  List<Linkifier> linkifiers = defaultLinkifiers,
+  List<Linkifier>? linkifiers = defaultLinkifiers,
 }) {
   var list = <LinkifyElement>[TextElement(text)];
 
