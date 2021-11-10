@@ -70,7 +70,7 @@ class LinkifyOptions {
   /// Excludes `.` at end of URLs.
   final bool excludeLastPeriod;
 
-  LinkifyOptions({
+  const LinkifyOptions({
     this.humanize = true,
     this.removeWww = false,
     this.looseUrl = false,
