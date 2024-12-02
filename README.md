@@ -1,6 +1,8 @@
 # `linkify` [![pub package](https://img.shields.io/pub/v/linkify.svg)](https://pub.dartlang.org/packages/linkify)
 
-Low-level link (text, URLs, emails) parsing library in Dart.
+Low-level link (text, URLs, emails, phone numbers, user tags) parsing library in Dart.
+
+Required Dart >=2.12 (has null-safety support).
 
 [Flutter library](https://github.com/Cretezy/flutter_linkify).
 
@@ -12,7 +14,7 @@ Install by adding this package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  linkify: ^2.0.3
+  linkify: ^5.0.0
 ```
 
 ## Usage
@@ -37,11 +39,25 @@ linkify("https://cretezy.com", options: LinkifyOptions(humanize: false));
 ```
 
 - `humanize`: Removes http/https from shown URLs
-- `removeWww`: Removes www. from shown URLs
-- `looseUrl`: Enables loose URL parsing (any string with "." is a URL)
+- `removeWww`: Removes `www.` from shown URLs
+- `looseUrl`: Enables loose URL parsing (should parse most URLs such as `abc.com/xyz`)
   - `defaultToHttps`: When used with [looseUrl], default to `https` instead of `http`
 - `excludeLastPeriod`: Excludes `.` at end of URLs
 
+### Linkifiers
+
+You can pass linkifiers to `linkify` as such:
+
+```dart
+linkify("@cretezy", linkifiers: [UserTagLinkifier()]);
+```
+
+Available linkifiers:
+
+- `EmailLinkifier`
+- `UrlLinkifier`
+- `PhoneNumberLinkifier`
+- `UserTagLinkifier`
 
 ## Custom Linkifier
 

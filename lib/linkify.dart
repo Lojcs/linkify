@@ -4,27 +4,40 @@ import 'package:linkify/src/time_stamp.dart';
 
 export 'package:linkify/src/email.dart' show EmailLinkifier, EmailElement;
 export 'package:linkify/src/url.dart' show UrlLinkifier, UrlElement;
+export 'package:linkify/src/user_tag.dart'
+    show UserTagLinkifier, UserTagElement;
+export 'package:linkify/src/phone_number.dart'
+    show PhoneNumberLinkifier, PhoneNumberElement;
 export 'package:linkify/src/time_stamp.dart'
     show TimeStampLinkifier, TimeStampElement;
 
 abstract class LinkifyElement {
-  final String? text;
+  final String text;
+  final String originText;
 
-  LinkifyElement(this.text);
+  LinkifyElement(this.text, [String? originText])
+      : originText = originText ?? text;
 
   @override
   bool operator ==(other) => equals(other);
+
+  @override
+  int get hashCode => Object.hash(text, originText);
 
   bool equals(other) => other is LinkifyElement && other.text == text;
 }
 
 class LinkableElement extends LinkifyElement {
-  final String? url;
+  final String url;
 
-  LinkableElement(String? text, this.url) : super(text ?? url);
+  LinkableElement(String? text, this.url, [String? originText])
+      : super(text ?? url, originText);
 
   @override
   bool operator ==(other) => equals(other);
+
+  @override
+  int get hashCode => Object.hash(text, originText, url);
 
   @override
   bool equals(other) =>
@@ -33,7 +46,7 @@ class LinkableElement extends LinkifyElement {
 
 /// Represents an element containing text
 class TextElement extends LinkifyElement {
-  TextElement(String? text) : super(text);
+  TextElement(String text) : super(text);
 
   @override
   String toString() {
@@ -44,6 +57,9 @@ class TextElement extends LinkifyElement {
   bool operator ==(other) => equals(other);
 
   @override
+  int get hashCode => Object.hash(text, originText);
+
+  @override
   bool equals(other) => other is TextElement && super.equals(other);
 }
 
@@ -51,7 +67,7 @@ abstract class Linkifier {
   const Linkifier();
 
   List<LinkifyElement> parse(
-      List<LinkifyElement> elements, LinkifyOptions? options);
+      List<LinkifyElement> elements, LinkifyOptions options);
 }
 
 class LinkifyOptions {
@@ -92,25 +108,23 @@ const defaultLinkifiers = [_urlLinkifier, _emailLinkifier, _timeStampLinkifier];
 /// Uses [linkTypes] to enable some types of links (URL, email).
 /// Will default to all (if `null`).
 List<LinkifyElement> linkify(
-  String? text, {
-  LinkifyOptions? options,
-  List<Linkifier>? linkifiers = defaultLinkifiers,
+  String text, {
+  LinkifyOptions options = const LinkifyOptions(),
+  List<Linkifier> linkifiers = defaultLinkifiers,
 }) {
   var list = <LinkifyElement>[TextElement(text)];
 
-  if (text == null || text.isEmpty) {
+  if (text.isEmpty) {
     return [];
   }
 
-  if (linkifiers == null || linkifiers.isEmpty) {
+  if (linkifiers.isEmpty) {
     return list;
   }
 
-  options ??= LinkifyOptions();
-
-  linkifiers.forEach((linkifier) {
+  for (var linkifier in linkifiers) {
     list = linkifier.parse(list, options);
-  });
+  }
 
   return list;
 }

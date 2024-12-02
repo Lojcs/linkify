@@ -160,6 +160,37 @@ void main() {
       linkify("https://example.com", options: LinkifyOptions(looseUrl: true)),
       [UrlElement("https://example.com", "example.com")],
     );
+
+    expectListEqual(
+      linkify("https://example.com.", options: LinkifyOptions(looseUrl: true)),
+      [UrlElement("https://example.com", "example.com"), TextElement(".")],
+    );
+  });
+
+  test('Parses both loose and not URL on the same text', () {
+    expectListEqual(
+      linkify('example.com http://example.com',
+          options: LinkifyOptions(looseUrl: true)),
+      [
+        UrlElement('http://example.com', 'example.com'),
+        TextElement(' '),
+        UrlElement('http://example.com', 'example.com')
+      ],
+    );
+
+    expectListEqual(
+      linkify(
+          'This text mixes both loose urls like example.com and not loose urls like http://example.com and http://another.example.com',
+          options: LinkifyOptions(looseUrl: true)),
+      [
+        TextElement('This text mixes both loose urls like '),
+        UrlElement('http://example.com', 'example.com'),
+        TextElement(' and not loose urls like '),
+        UrlElement('http://example.com', 'example.com'),
+        TextElement(' and '),
+        UrlElement('http://another.example.com', 'another.example.com')
+      ],
+    );
   });
 
   test('Parses ending period', () {
@@ -168,6 +199,117 @@ void main() {
       [
         UrlElement("https://example.com/test", "example.com/test"),
         TextElement(".")
+      ],
+    );
+  });
+
+  test('Parses CR correctly.', () {
+    expectListEqual(
+      linkify('lorem\r\nipsum https://example.com'),
+      [
+        TextElement('lorem\r\nipsum '),
+        UrlElement('https://example.com', 'example.com'),
+      ],
+    );
+  });
+
+  test('Parses user tag', () {
+    expectListEqual(
+      linkify(
+        "@example",
+        linkifiers: [
+          UrlLinkifier(),
+          EmailLinkifier(),
+          UserTagLinkifier(),
+        ],
+      ),
+      [UserTagElement("@example")],
+    );
+  });
+
+  test('Parses email, link, and user tag', () {
+    expectListEqual(
+      linkify(
+        "person@example.com at https://google.com @example",
+        linkifiers: [
+          UrlLinkifier(),
+          EmailLinkifier(),
+          UserTagLinkifier(),
+        ],
+      ),
+      [
+        EmailElement("person@example.com"),
+        TextElement(" at "),
+        UrlElement("https://google.com", "google.com"),
+        TextElement(" "),
+        UserTagElement("@example")
+      ],
+    );
+  });
+
+  test('Parses invalid phone number', () {
+    expectListEqual(
+      linkify(
+        "This is an invalid numbers 17.00",
+        linkifiers: [
+          UrlLinkifier(),
+          EmailLinkifier(),
+          PhoneNumberLinkifier(),
+        ],
+      ),
+      [
+        TextElement("This is an invalid numbers 17.00"),
+      ],
+    );
+  });
+
+  test('Parses german phone number', () {
+    expectListEqual(
+      linkify(
+        "This is a german example number +49 30 901820",
+        linkifiers: [
+          UrlLinkifier(),
+          EmailLinkifier(),
+          PhoneNumberLinkifier(),
+        ],
+      ),
+      [
+        TextElement("This is a german example number "),
+        PhoneNumberElement("+49 30 901820"),
+      ],
+    );
+  });
+
+  test('Parses seattle phone number', () {
+    expectListEqual(
+      linkify(
+        "This is a seattle example number +1 206 555 0100",
+        linkifiers: [
+          UrlLinkifier(),
+          EmailLinkifier(),
+          PhoneNumberLinkifier(),
+        ],
+      ),
+      [
+        TextElement("This is a seattle example number "),
+        PhoneNumberElement("+1 206 555 0100"),
+      ],
+    );
+  });
+
+  test('Parses uk phone number', () {
+    expectListEqual(
+      linkify(
+        "This is an example number from uk: +44 113 496 0000",
+        linkifiers: [
+          UrlLinkifier(),
+          EmailLinkifier(),
+          PhoneNumberLinkifier(),
+        ],
+      ),
+      [
+        TextElement("This is an example number from uk: "),
+        PhoneNumberElement("+44 113 496 0000"),
       ],
     );
   });

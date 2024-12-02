@@ -1,13 +1,13 @@
 import 'package:linkify/linkify.dart';
 
-final _emailRegex = RegExp(
-  r'^(.*?)((mailto:)?[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z][A-Z]+)',
+final _phoneNumberRegex = RegExp(
+  r'^(.*?)((tel:)?[+]*[\s/0-9]{8,15})',
   caseSensitive: false,
   dotAll: true,
 );
 
-class EmailLinkifier extends Linkifier {
-  const EmailLinkifier();
+class PhoneNumberLinkifier extends Linkifier {
+  const PhoneNumberLinkifier();
 
   @override
   List<LinkifyElement> parse(elements, options) {
@@ -15,7 +15,7 @@ class EmailLinkifier extends Linkifier {
 
     for (var element in elements) {
       if (element is TextElement) {
-        final match = _emailRegex.firstMatch(element.text!);
+        var match = _phoneNumberRegex.firstMatch(element.text);
 
         if (match == null) {
           list.add(element);
@@ -27,9 +27,8 @@ class EmailLinkifier extends Linkifier {
           }
 
           if (match.group(2)?.isNotEmpty == true) {
-            // Always humanize emails
-            list.add(EmailElement(
-              match.group(2)!.replaceFirst(RegExp(r'mailto:'), ''),
+            list.add(PhoneNumberElement(
+              match.group(2)!.replaceFirst(RegExp(r'tel:'), ''),
             ));
           }
 
@@ -46,26 +45,28 @@ class EmailLinkifier extends Linkifier {
   }
 }
 
-/// Represents an element containing an email address
-class EmailElement extends LinkableElement {
-  final String emailAddress;
+/// Represents an element containing a phone number
+class PhoneNumberElement extends LinkableElement {
+  final String phoneNumber;
 
-  EmailElement(this.emailAddress) : super(emailAddress, 'mailto:$emailAddress');
+  PhoneNumberElement(this.phoneNumber)
+      : super(
+          phoneNumber,
+          'tel:$phoneNumber',
+        );
 
   @override
   String toString() {
-    return "EmailElement: '$emailAddress' ($text)";
+    return "PhoneNumberElement: '$phoneNumber' ($text)";
   }
 
   @override
   bool operator ==(other) => equals(other);
 
   @override
-  int get hashCode => Object.hash(text, originText, url, emailAddress);
+  int get hashCode => Object.hash(text, originText, url, phoneNumber);
 
   @override
   bool equals(other) =>
-      other is EmailElement &&
-      super.equals(other) &&
-      other.emailAddress == emailAddress;
+      other is PhoneNumberElement && phoneNumber == other.phoneNumber;
 }
